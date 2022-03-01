@@ -33,6 +33,24 @@ module.exports = {
           return res.status(500).json(err);
         });
     },
+    //update user by id
+    updateUser(req, res) {
+      User.findOneAndUpdate({ _id: req.params.userId }, {username: req.body.username})
+        .select('-__v')
+        .lean()
+        .then(async (user) =>
+          !user
+            ? res.status(404).json({ message: 'No user with that ID' })
+            : res.json({
+                user,
+                
+              })
+        )
+        .catch((err) => {
+          console.log(err);
+          return res.status(500).json(err);
+        });
+    },
     // create a new user
     createUser(req, res) {
       User.create(req.body)
@@ -47,6 +65,7 @@ module.exports = {
         .then((user) => res.json(user))
         .catch((err) => res.status(500).json(err));
     },
+    // Delete a Friend
     deleteFriend(req, res) {
         User.findOneAndUpdate({_id: req.params.userId}, {$pull:{friends: req.params.friendId}})
         .then(()=>User.findOneAndUpdate({_id: req.params.friendId}, {$pull:{friends: req.params.userId}}))
@@ -54,7 +73,7 @@ module.exports = {
         .then((user) => res.json(user))
         .catch((err) => res.status(500).json(err));
     },
-    // Delete a user and remove them from the course
+    // Delete a user
     deleteUser(req, res) {
       User.findOneAndRemove({ _id: req.params.userId })
         .then((user) =>{
@@ -83,23 +102,23 @@ module.exports = {
     },
   
     // Add an assignment to a user
-    addAssignment(req, res) {
-      console.log('You are adding an assignment');
-      console.log(req.body);
-      User.findOneAndUpdate(
-        { _id: req.params.userId },
-        { $addToSet: { assignments: req.body } },
-        { runValidators: true, new: true }
-      )
-        .then((user) =>
-          !user
-            ? res
-                .status(404)
-                .json({ message: 'No user found with that ID :(' })
-            : res.json(user)
-        )
-        .catch((err) => res.status(500).json(err));
-    },
+    // addAssignment(req, res) {
+    //   console.log('You are adding an assignment');
+    //   console.log(req.body);
+    //   User.findOneAndUpdate(
+    //     { _id: req.params.userId },
+    //     { $addToSet: { assignments: req.body } },
+    //     { runValidators: true, new: true }
+    //   )
+    //     .then((user) =>
+    //       !user
+    //         ? res
+    //             .status(404)
+    //             .json({ message: 'No user found with that ID :(' })
+    //         : res.json(user)
+    //     )
+    //     .catch((err) => res.status(500).json(err));
+    // },
     // Remove assignment from a user
     // removeAssignment(req, res) {
     //   User.findOneAndUpdate(
