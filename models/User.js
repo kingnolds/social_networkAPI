@@ -2,13 +2,13 @@ const { Schema, model } = require('mongoose');
 
 const userSchema = new Schema(
     {
-        username:{
+        username: {
             type: String,
             required: true,
             unique: true,
             trim: true
         },
-        email:{
+        email: {
             type: String,
             required: true,
             unique: true,
@@ -20,7 +20,7 @@ const userSchema = new Schema(
                 ref: 'Thought',
             },
         ],
-        friends:[
+        friends: [
             {
                 type: Schema.Types.ObjectId,
                 ref: 'User',
@@ -29,23 +29,16 @@ const userSchema = new Schema(
     },
     {
         toJSON: {
-          getters: true,
-          virtuals: true,
+            getters: true,
+            virtuals: true,
         },
-      }
+    }
 );
 
 userSchema.virtual('friendCount').get(function () {
     return this.friends.length;
-  });
+});
 
-// userSchema.virtual('friends',{
-//     ref: 'User',
-//     localField: '_id',
-//     foreignField: 'friends',
- 
-//     justOne: false,
-//  },{ toJSON: { virtuals: true } });
 
 const User = model('user', userSchema);
 
