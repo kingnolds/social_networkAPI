@@ -75,8 +75,12 @@ module.exports = {
     },
     // Delete a user
     deleteUser(req, res) {
+      // User.find({_id: req.params.userId}).then((user)=> Thought.deleteMany({ username : user.username}))
       User.findOneAndRemove({ _id: req.params.userId })
-        .then((user) =>{
+        .then( async (user) =>{
+          await Thought.deleteMany({ username : user.username})
+          console.log(user.username)
+          console.log('Associated Thoughts Deleted')
         
           return !user 
             ? res.status(404).json({ message: 'No such user exists' }) 
